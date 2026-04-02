@@ -216,7 +216,7 @@ double Solid::WeaklyCompressibleEtienneFSIStructureForceFunction::evaluate(
   // ease notation
   double x = xp[0];
   double y = xp[1];
-  double E = youngmodulus_;
+  double E = youngmodulus_.at(0);
   double v = poissonratio_;
   double r = strucdensity_;
 

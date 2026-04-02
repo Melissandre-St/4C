@@ -57,7 +57,7 @@ namespace Solid
     [[nodiscard]] std::size_t number_components() const override { return (2); };
 
    private:
-    double youngmodulus_;
+    Core::IO::InputField<double> youngmodulus_;
     double poissonratio_;
     double strucdensity_;
   };
