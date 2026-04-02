@@ -13,6 +13,7 @@
 #include "4C_mat_stvenantkirchhoff.hpp"
 #include "4C_material_parameter_base.hpp"
 #include "4C_unittest_utils_assertions_test.hpp"
+#include "4C_io_input_field.hpp"
 
 #include <Teuchos_ParameterList.hpp>
 
@@ -27,7 +28,7 @@ namespace
     {
       Core::IO::InputParameterContainer container;
       // add material parameters to container
-      container.add("YOUNG", young_);
+      container.add("YOUNG", Core::IO::InputField<double>{young_});
       container.add("NUE", nu_);
       container.add("DENS", rho_);
 

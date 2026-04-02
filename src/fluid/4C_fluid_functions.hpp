@@ -336,7 +336,7 @@ namespace FLD
     double refdensity_;
     double refpressure_;
     double comprcoeff_;
-    double youngmodulus_;
+    Core::IO::InputField<double> youngmodulus_;
     double poissonratio_;
     double strucdensity_;
   };
@@ -360,7 +360,7 @@ namespace FLD
     double refdensity_;
     double refpressure_;
     double comprcoeff_;
-    double youngmodulus_;
+    Core::IO::InputField<double> youngmodulus_;
     double poissonratio_;
     double strucdensity_;
   };
@@ -384,7 +384,7 @@ namespace FLD
     double refdensity_;
     double refpressure_;
     double comprcoeff_;
-    double youngmodulus_;
+    Core::IO::InputField<double> youngmodulus_;
     double poissonratio_;
     double strucdensity_;
   };

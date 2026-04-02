@@ -2368,7 +2368,6 @@ FLD::WeaklyCompressibleEtienneFSIFluidFunction::WeaklyCompressibleEtienneFSIFlui
     : refdensity_(0.0),
       refpressure_(0.0),
       comprcoeff_(0.0),
-      youngmodulus_(0.0),
       poissonratio_(0.0),
       strucdensity_(0.0)
 {
@@ -2392,7 +2391,7 @@ double FLD::WeaklyCompressibleEtienneFSIFluidFunction::evaluate(
   double r0 = refdensity_;
   double p0 = refpressure_;
   double epsilon = comprcoeff_;
-  double E = youngmodulus_;
+  double E = youngmodulus_.at(0);
   double v = poissonratio_;
 
   // initialize variables
@@ -2819,7 +2818,6 @@ FLD::WeaklyCompressibleEtienneFSIFluidForceFunction::WeaklyCompressibleEtienneFS
     : refdensity_(0.0),
       refpressure_(0.0),
       comprcoeff_(0.0),
-      youngmodulus_(0.0),
       poissonratio_(0.0),
       strucdensity_(0.0)
 {
@@ -2841,7 +2839,7 @@ double FLD::WeaklyCompressibleEtienneFSIFluidForceFunction::evaluate(
   double x = xp[0];
   double y = xp[1];
   double r0 = refdensity_;
-  double E = youngmodulus_;
+  double E = youngmodulus_.at(0);
   double v = poissonratio_;
 
   // initialize variables
@@ -7863,7 +7861,6 @@ FLD::WeaklyCompressibleEtienneFSIFluidViscosityFunction::
     : refdensity_(0.0),
       refpressure_(0.0),
       comprcoeff_(0.0),
-      youngmodulus_(0.0),
       poissonratio_(0.0),
       strucdensity_(0.0)
 {
@@ -7883,7 +7880,7 @@ double FLD::WeaklyCompressibleEtienneFSIFluidViscosityFunction::evaluate(
 {
   // ease notation
   double x = xp[0];
-  double E = youngmodulus_;
+  double E = youngmodulus_.at(0);
   double v = poissonratio_;
 
   // initialize variables

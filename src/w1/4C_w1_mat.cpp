@@ -58,7 +58,7 @@ void Discret::Elements::Wall1::w1_call_matgeononl(
     {
       const Mat::StVenantKirchhoff* actmat =
           static_cast<const Mat::StVenantKirchhoff*>(material.get());
-      double ym = actmat->youngs();
+      double ym = actmat->youngs(id());
       double pv = actmat->poisson_ratio();
 
 
