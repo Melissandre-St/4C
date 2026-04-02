@@ -14,6 +14,7 @@
 #include "4C_linalg_map.hpp"
 #include "4C_utils_function.hpp"
 #include "4C_utils_function_manager.hpp"
+#include "4C_io_input_field.hpp"
 
 FOUR_C_NAMESPACE_OPEN
 
@@ -150,7 +151,8 @@ void Core::FE::do_initial_field(const Core::Utils::FunctionManager& function_man
 
   // loop nodes to identify and evaluate spatial distributions
   // of Initfield boundary conditions
-  const auto funct_num = cond.parameters().get<int>("FUNCT");
+  const auto& params = cond.parameters(); // This is a pointer
+  const double time = 0.0;  // dummy time here
 
   for (const int cond_nodeid : cond_nodeids)
   {
@@ -177,6 +179,12 @@ void Core::FE::do_initial_field(const Core::Utils::FunctionManager& function_man
 
     if ((total_numdof % numdof) != 0) FOUR_C_THROW("illegal dof set number");
 
+    std::vector<double> vec_vals;
+    if (auto vector_field = params.get_if<Core::IO::InputField<std::vector<double>>>("VECTOR_INPUT_FIELD"))
+    {
+      vec_vals = vector_field->at(node->id());
+    }
+
     // now loop over all relevant DOFs
     for (int j = 0; j < total_numdof; ++j)
     {
@@ -188,19 +196,33 @@ void Core::FE::do_initial_field(const Core::Utils::FunctionManager& function_man
       {
         if (localdof == locid)
         {
-          const double time = 0.0;  // dummy time here
+          double val = 0.0; 
 
-          const double functfac =
-              funct_num > 0
-                  ? function_manager.function_by_id<Core::Utils::FunctionOfSpaceTime>(funct_num)
-                        .evaluate(node->x(), time, localdof)
-                  : 0.0;
+          // 1. We defined a function's ID
+          if (auto funct_num = params.get_if<int>("FUNCT"); funct_num && *funct_num > 0)
+          {
+            val = function_manager.function_by_id<Core::Utils::FunctionOfSpaceTime>(*funct_num)
+                      .evaluate(node->x(), time, localdof);
+          }
+          // 2. We defined a scalar input field
+          else if (auto scalar_field = params.get_if<Core::IO::InputField<double>>("SCALAR_INPUT_FIELD"))
+          {
+            val = scalar_field->at(node->id());
+          }
+          // 3. We defined a vector input field
+          else if (!vec_vals.empty())
+          {
+            if (localdof < static_cast<int>(vec_vals.size()))
+            {
+              val = vec_vals[localdof];
+            }           
+          }
 
           // assign value
           const int gid = node_dofs[j];
           const int lid = fieldvector.get_map().lid(gid);
           if (lid < 0) FOUR_C_THROW("Global id {} not on this proc in system vector", gid);
-          fieldvector.get_values()[lid] = functfac;
+          fieldvector.get_values()[lid] = val;
         }
       }
     }
