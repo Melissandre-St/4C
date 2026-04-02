@@ -37,6 +37,7 @@
 #include "4C_sti_input.hpp"
 #include "4C_thermo_input.hpp"
 #include "4C_xfem_input.hpp"
+#include "4C_io_input_field.hpp"
 
 FOUR_C_NAMESPACE_OPEN
 
@@ -365,9 +366,14 @@ std::vector<Core::Conditions::ConditionDefinition> Global::valid_conditions()
             "Artery"},
         {.description = "init field"}));
 
-    // for initial vector fields, use the COMPONENT option of our functions
-    cond.add_component(parameter<int>("FUNCT"));
+    // for initial vector fields, use the COMPONENT option of our functions or retrieve the values from an input field
 
+    cond.add_component(one_of({
+        parameter<int>("FUNCT", {.description = "ID of the function for initial field"}),
+        input_field<double>("SCALAR_INPUT_FIELD", {.description = "Scalar input field for initial field"}), // temperature, porosity, pressure etc
+        input_field<std::vector<double>>("VECTOR_INPUT_FIELD", {.description = "Multi-component input field for initial field"}), // velocity, ScaTra, PoroMultiFluid etc        
+        }));
+        
     condlist.emplace_back(cond);
   };
 
