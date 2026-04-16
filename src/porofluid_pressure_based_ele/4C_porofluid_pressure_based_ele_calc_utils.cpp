@@ -29,6 +29,7 @@ PoroPressureBased::ElementUtils::get_single_reaction_mat_from_multi_reactions_ma
   if (singlemat->material_type() != Core::Materials::m_fluidporo_singlereaction)
     FOUR_C_THROW("only poro singleraction material valid");
 
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc_utils1]" << std::endl;
   return static_cast<Mat::FluidPoroSingleReaction&>(*singlemat);
 }
 
@@ -48,6 +49,7 @@ PoroPressureBased::ElementUtils::get_single_phase_mat_from_multi_material(
     FOUR_C_THROW("check at position {}/{} failed, only poro singlephase material valid",
         phasenum + 1, multiphasemat.num_mat());
 
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc_utils2]" << std::endl;
   return static_cast<const Mat::FluidPoroSinglePhase&>(*singlemat);
 }
 
@@ -67,6 +69,7 @@ PoroPressureBased::ElementUtils::get_single_phase_mat_from_material(
   const Mat::FluidPoroMultiPhase& multiphasemat =
       static_cast<const Mat::FluidPoroMultiPhase&>(material);
 
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc_utils3]" << std::endl;
   return get_single_phase_mat_from_multi_material(multiphasemat, phasenum);
 }
 
@@ -85,7 +88,8 @@ PoroPressureBased::ElementUtils::get_single_vol_frac_mat_from_multi_material(
   if (singlemat->material_type() != Core::Materials::m_fluidporo_singlevolfrac)
     FOUR_C_THROW("check at position {}/{} failed, only poro single vol fraction material valid",
         volfracnum + 1, multiphasemat.num_mat());
-
+  
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc_utils4]" << std::endl;
   return static_cast<const Mat::FluidPoroSingleVolFrac&>(*singlemat);
 }
 
@@ -103,7 +107,7 @@ PoroPressureBased::ElementUtils::get_single_vol_frac_pressure_blood_lung_mat_fro
   if (singlemat->material_type() != Core::Materials::m_fluidporo_volfrac_pressure_blood_lung)
     FOUR_C_THROW("check at position {}/{} failed, only poro single vol fraction material valid",
         volfracnum + 1, multiphasemat.num_mat());
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc_utils5]" << std::endl;
   return static_cast<const Mat::FluidPoroVolFracPressureBloodLung&>(*singlemat);
 }
 
@@ -123,7 +127,7 @@ PoroPressureBased::ElementUtils::get_single_vol_frac_mat_from_material(
   // cast
   const Mat::FluidPoroMultiPhase& multiphasemat =
       static_cast<const Mat::FluidPoroMultiPhase&>(material);
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc_utils6]" << std::endl;
   return get_single_vol_frac_mat_from_multi_material(multiphasemat, volfracnum);
 }
 
@@ -141,7 +145,7 @@ PoroPressureBased::ElementUtils::get_single_vol_frac_pressure_blood_lung_mat_fro
   // cast
   const Mat::FluidPoroMultiPhase& multiphasemat =
       static_cast<const Mat::FluidPoroMultiPhase&>(material);
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc_utils7]" << std::endl;
   return get_single_vol_frac_pressure_blood_lung_mat_from_multi_material(multiphasemat, volfracnum);
 }
 
@@ -160,7 +164,7 @@ PoroPressureBased::ElementUtils::get_vol_frac_pressure_mat_from_multi_material(
   if (singlemat->material_type() != Core::Materials::m_fluidporo_volfracpressure)
     FOUR_C_THROW("check at position {}/{} failed, only poro single vol fraction material valid",
         volfracnum + 1, multiphasemat.num_mat());
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc_utils8]" << std::endl;
   return static_cast<const Mat::FluidPoroVolFracPressure&>(*singlemat);
 }
 
@@ -179,7 +183,7 @@ PoroPressureBased::ElementUtils::get_vol_frac_pressure_mat_from_material(
   // cast
   const Mat::FluidPoroMultiPhase& multiphasemat =
       static_cast<const Mat::FluidPoroMultiPhase&>(material);
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc_utils9]" << std::endl;
   return get_vol_frac_pressure_mat_from_multi_material(multiphasemat, volfracnum);
 }
 

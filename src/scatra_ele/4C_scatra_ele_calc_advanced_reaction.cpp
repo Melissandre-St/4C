@@ -105,11 +105,20 @@ void Discret::Elements::ScaTraEleCalcAdvReac<distype, probdim>::get_material_par
       int matid = actmat->mat_id(k);
       std::shared_ptr<Core::Mat::Material> singlemat = actmat->material_by_id(matid);
 
-      // Note: order is important here!!
+      // Note: ordeset_advanced_reaction_termsr is important here!!
       materials(singlemat, k, densn[k], densnp[k], densam[k], visc, iquad);
 
+      const double scale = 1.0; //artificial scale (cf 4C_mat_list_reactions)
+
+      // DEBUG
+      //int element_id = ele->id();
+      //if (element_id % 1000 == 0) 
+      //{
+      //  std::cout << "[CHECK scatra_ele_calc_advanced_reaction1] Element ID: " << element_id << std::endl;
+      //}
+
       set_advanced_reaction_terms(
-          k, actmat, get_gp_coord());  // every reaction calculation stuff happens in here!!
+          k, actmat, get_gp_coord(), scale, ele->id());  // every reaction calculation stuff happens in here!!
     }
   }
 
@@ -316,18 +325,25 @@ template <Core::FE::CellType distype, int probdim>
 void Discret::Elements::ScaTraEleCalcAdvReac<distype, probdim>::set_advanced_reaction_terms(
     const int k,                                               //!< index of current scalar
     const std::shared_ptr<Mat::MatListReactions> matreaclist,  //!< index of current scalar
-    const double* gpcoord                                      //!< current Gauss-point coordinates
+    const double* gpcoord,                                      //!< current Gauss-point coordinates
+    const double scale, int element_id
 )
 {
   const std::shared_ptr<ScaTraEleReaManagerAdvReac> remanager = rea_manager();
 
   auto time = my::scatraparatimint_->time();
 
+  // DEBUG
+  //if (element_id % 1000 == 0)
+  //{
+  //  std::cout << "[CHECK scatra_ele_calc_advanced_reaction2] Element ID: " << element_id << std::endl;
+  //}
+
   remanager->add_to_rea_body_force(
-      matreaclist->calc_rea_body_force_term(k, my::scatravarmanager_->phinp(), gpcoord, time), k);
+      matreaclist->calc_rea_body_force_term(k, my::scatravarmanager_->phinp(), gpcoord, time, scale, element_id), k);
 
   matreaclist->calc_rea_body_force_deriv_matrix(k, remanager->get_rea_body_force_deriv_vector(k),
-      my::scatravarmanager_->phinp(), gpcoord, time);
+      my::scatravarmanager_->phinp(), gpcoord, time, scale, element_id);
 }
 
 /*----------------------------------------------------------------------*

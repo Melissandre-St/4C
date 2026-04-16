@@ -379,6 +379,7 @@ void Mat::FluidPoroMultiPhase::evaluate_gen_pressure(
 
     // evaluate generalized pressure (i.e. some kind of linear combination of the true pressures)
     genpressure[iphase] = singlephasemat.evaluate_gen_pressure(iphase, phinp);
+    //std::cout << "[CHECK mat_fluid_poro_multiphase1]" << std::endl;
   }
   return;
 }
@@ -407,6 +408,7 @@ void Mat::FluidPoroMultiPhase::evaluate_saturation(std::vector<double>& saturati
       saturation[constraintsaturationphase] -= saturation[iphase];
     }
   }
+  //std::cout << "[CHECK mat_fluid_poro_multiphase2]" << std::endl;
   return;
 }
 
@@ -445,6 +447,7 @@ void Mat::FluidPoroMultiPhase::evaluate_deriv_of_dof_wrt_pressure(
           singlephase.evaluate_deriv_of_dof_wrt_pressure(iphase, jphase, state);
     }
   }
+  //std::cout << "[CHECK mat_fluid_poro_multiphase3]" << std::endl;
   return;
 }
 
@@ -478,6 +481,7 @@ void Mat::FluidPoroMultiPhase::evaluate_deriv_of_saturation_wrt_pressure(
       derivs(constraintsaturationphase, jphase) += -1.0 * saturationderiv;
     }
   }
+  //std::cout << "[CHECK mat_fluid_poro_multiphase4]" << std::endl;
   return;
 }
 
@@ -515,6 +519,7 @@ void Mat::FluidPoroMultiPhase::evaluate_second_deriv_of_saturation_wrt_pressure(
       }
     }
   }
+  //std::cout << "[CHECK mat_fluid_poro_multiphase5]" << std::endl;
   return;
 }
 

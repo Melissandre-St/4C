@@ -92,6 +92,8 @@ int Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::evaluate(Core::Eleme
   // evaluate action
   evaluate_action(ele, params, discretization, action, la, elemat, elevec);
 
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc1]" << std::endl;
+
   return 0;
 }
 
@@ -168,6 +170,8 @@ int Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::evaluate_action(
     }
   }  // switch(action)
 
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc2]" << std::endl;
+
   return 0;
 }
 
@@ -190,6 +194,8 @@ void Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::gauss_point_loop(
 
   // start loop over gauss points
   gauss_point_loop(intpoints, ele, elemat, elevec, discretization, la);
+
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc3]" << std::endl;
 
   return;
 }
@@ -234,7 +240,8 @@ void Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::gauss_point_loop_od
 
   // start loop over gauss points
   gauss_point_loop_od_struct(intpoints, ele, elemat, elevec, discretization, la);
-
+  
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc4]" << std::endl;
   return;
 }
 
@@ -256,7 +263,7 @@ void Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::gauss_point_loop_od
 
   // start loop over gauss points
   gauss_point_loop_od_scatra(intpoints, ele, elemat, elevec, discretization, la);
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc5]" << std::endl;
   return;
 }
 
@@ -313,7 +320,7 @@ void Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::gauss_point_loop(
     // clear current gauss point data for safety
     phasemanager_->clear_gp_state();
   }
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc6]" << std::endl;
   return;
 }
 
@@ -351,6 +358,8 @@ void Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::gauss_point_loop_od
     // clear current gauss point data for safety
     phasemanager_->clear_gp_state();
   }
+
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc7]" << std::endl;
 
   return;
 }
@@ -390,7 +399,7 @@ void Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::gauss_point_loop_od
     // clear current gauss point data for safety
     phasemanager_->clear_gp_state();
   }
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc8]" << std::endl;
   return;
 }
 
@@ -445,6 +454,7 @@ void Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::node_loop(Core::Ele
     // clear current gauss point data for safety
     phasemanager_->clear_gp_state();
   }
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc9]" << std::endl;
 }
 
 /*-----------------------------------------------------------------------------*
@@ -474,7 +484,8 @@ void Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::evaluate_only_eleme
   //----------------------------------------------------------------
   evaluator_->evaluate_vector(elevec, funct_, derxy_, xyze_, totalnumdofpernode_, *phasemanager_,
       *variablemanager_, 1.0, 1.0);
-
+  
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc10]" << std::endl;
   return;
 }
 
@@ -530,7 +541,7 @@ int Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::setup_calc(Core::Ele
   evaluator_ =
       Discret::Elements::PoroFluidEvaluator::EvaluatorInterface<nsd_, nen_>::create_evaluator(
           *para_, action, totalnumdofpernode_, numfluidphases_, *phasemanager_);
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc11]" << std::endl;
   return 0;
 }
 
@@ -543,6 +554,7 @@ void Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::extract_element_and
     Core::FE::Discretization& discretization, Core::Elements::LocationArray& la)
 {
   variablemanager_->extract_element_and_node_values(*ele, discretization, la, xyze_);
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc12]" << std::endl;
   return;
 }
 
@@ -593,7 +605,7 @@ Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::eval_shape_func_and_deri
 
   // set integration factor: fac = Gauss weight * det(J)
   const double fac = intpoints.ip().qwgt[iquad] * det_;
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc13]" << std::endl;
   // return integration factor for current GP: fac = Gauss weight * det(J)
   return fac;
 
@@ -637,7 +649,7 @@ double Discret::Elements::PoroFluidMultiPhaseEleCalc<
 
   xjm_.multiply_nt(deriv_, xyze_);
   det = xij_.invert(xjm_);
-
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc14]" << std::endl;
   return det;
 }
 
@@ -672,6 +684,7 @@ void Discret::Elements::PoroFluidMultiPhaseEleCalc<distype>::compute_jacobian_at
   // determinant of deformationgradient det F = det ( d x / d X ) = det (dx/ds) * ( det(dX/ds)
   // )^-1
   j_ = det_ / det0;
+  //std::cout << "[CHECK porofluid_pressure_based_ele_calc15]" << std::endl;
 }
 
 /*----------------------------------------------------------------------*

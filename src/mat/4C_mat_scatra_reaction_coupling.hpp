@@ -66,8 +66,8 @@ namespace Mat
             const std::vector<double>& couprole,  //!< coupling role vector
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
-            double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+            double scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
             ) = 0;
 
         /// helper for calculating advanced reaction term derivatives
@@ -82,7 +82,8 @@ namespace Mat
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
             double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+                scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
             ) = 0;
 
         /// add additional variables for by-function reaction
@@ -108,7 +109,8 @@ namespace Mat
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
             double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+                scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
         )
         {
           // do nothing in this case --> only the by-function reaction will override this method
@@ -152,7 +154,8 @@ namespace Mat
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
             double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+                scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
             ) override;
 
         /// helper for calculating advanced reaction term derivatives
@@ -167,7 +170,8 @@ namespace Mat
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
             double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+                scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
             ) override;
 
        private:
@@ -215,7 +219,8 @@ namespace Mat
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
             double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+                scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
             ) override;
 
         /// helper for calculating advanced reaction term derivatives
@@ -230,7 +235,8 @@ namespace Mat
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
             double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+                scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
             ) override;
 
         /// helper for calculating advanced reaction term derivatives after additional variables
@@ -243,7 +249,8 @@ namespace Mat
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
             double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+                scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
             ) override;
 
         /// add additional variables for by-function reaction
@@ -296,14 +303,15 @@ namespace Mat
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
             double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+                scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
             ) override
         {
           // check
           FOUR_C_ASSERT(is_init(), "Reaction class has not been initialized!");
 
           // call the real evaluation (scale_phi should have been applied in wrapper class)
-          return calc_rea_body_force_term(k, numscal, phinp, constants, couprole, scale_reac);
+          return calc_rea_body_force_term(k, numscal, phinp, constants, couprole, scale_reac, element_id);
         };
 
         /// helper for calculating advanced reaction term derivatives
@@ -318,14 +326,15 @@ namespace Mat
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
             double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+                scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
             ) override
         {
           // check
           FOUR_C_ASSERT(is_init(), "Reaction class has not been initialized!");
 
           // call the real evaluation (scale_phi should have been applied in wrapper class)
-          calc_rea_body_force_deriv(k, numscal, derivs, phinp, constants, couprole, scale_reac);
+          calc_rea_body_force_deriv(k, numscal, derivs, phinp, constants, couprole, scale_reac, element_id);
           return;
         };
 
@@ -338,8 +347,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) = 0;
 
         /// helper for calculating advanced reaction term derivatives
@@ -351,8 +360,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) = 0;
 
        private:
@@ -385,8 +394,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) override;
 
         /// helper for calculating advanced reaction term derivatives
@@ -398,8 +407,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) override;
       };
 
@@ -427,8 +436,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) override;
 
         /// helper for calculating advanced reaction term derivatives
@@ -440,8 +449,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) override;
       };
 
@@ -470,8 +479,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) override;
 
         /// helper for calculating advanced reaction term derivatives
@@ -483,8 +492,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) override;
       };
 
@@ -513,8 +522,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) override;
 
         /// helper for calculating advanced reaction term derivatives
@@ -526,8 +535,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) override;
       };
 
@@ -557,7 +566,8 @@ namespace Mat
             double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
                                 //!< stoichometry)
             double
-                scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+                scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+            int element_id
             ) override
         {
           // check
@@ -565,7 +575,7 @@ namespace Mat
 
           // call the real evaluation (scale_phi should have been applied in wrapper class)
           calc_rea_body_force_deriv_add_variables(
-              k, derivs, variables, constants, couprole, scale_reac);
+              k, derivs, variables, constants, couprole, scale_reac, element_id);
         }
 
         /// add additional variables for by-function reaction
@@ -583,8 +593,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                   //!< stoichometry)
             ) override;
 
         /// helper for calculating advanced reaction term derivatives
@@ -596,8 +606,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id                  //!< stoichometry)
             ) override;
 
         /// helper for calculating advanced reaction term derivatives after additional variables
@@ -607,8 +617,8 @@ namespace Mat
             const std::vector<std::pair<std::string, double>>&
                 constants,                        //!< constants (including scalar values phinp)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id      //!< stoichometry)
         );
 
         /// helper for evaluation by function
@@ -633,8 +643,8 @@ namespace Mat
             const std::vector<std::pair<std::string, double>>&
                 constants,                        //!< constants (including scalar values phinp)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id      //!< stoichometry)
         );
 
         //! templated internal calc_rea_body_force_deriv implementation
@@ -647,8 +657,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id     //!< stoichometry)
         );
 
         //! templated internal calc_rea_body_force_term implementation
@@ -660,8 +670,8 @@ namespace Mat
                 constants,  //!< vector containing values which are independent of the scalars (e.g.
                             //!< t,x,y,z)
             const std::vector<double>& couprole,  //!< coupling role vector
-            double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                               //!< stoichometry)
+            double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+            int element_id  //!< stoichometry)
         );
 
         //! templated internal Initialize implementation

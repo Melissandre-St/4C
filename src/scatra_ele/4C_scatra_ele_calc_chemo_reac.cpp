@@ -109,7 +109,7 @@ void Discret::Elements::ScaTraEleCalcChemoReac<distype, probdim>::get_material_p
       advreac::materials(singlemat, k, densn[k], densnp[k], densam[k], visc, iquad);
 
       advreac::set_advanced_reaction_terms(k, actmat,
-          advreac::get_gp_coord());  // every reaction calculation stuff happens in here!!
+          advreac::get_gp_coord(), 1.0, 0);  // every reaction calculation stuff happens in here!! => artificial scale factor of 1.0 and element_id=0
     }
   }
 
@@ -148,7 +148,7 @@ void Discret::Elements::ScaTraEleCalcChemoReac<distype, probdim>::get_material_p
       // Note: order is important here!!
       my::materials(singlemat, k, densn[k], densnp[k], densam[k], visc, iquad);
       advreac::set_advanced_reaction_terms(k, actmat,
-          advreac::get_gp_coord());  // every reaction calculation stuff happens in here!!
+          advreac::get_gp_coord(), 1.0, 0);  // every reaction calculation stuff happens in here!! => artificial scale factor of 1.0 and element_id=0
     }
   }
 
