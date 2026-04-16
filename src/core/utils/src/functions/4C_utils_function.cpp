@@ -12,6 +12,7 @@
 #include "4C_utils_exceptions.hpp"
 #include "4C_utils_function_manager.hpp"
 #include "4C_utils_symbolic_expression.hpp"
+#include "4C_io_input_field.hpp"
 
 #include <Sacado.hpp>
 
@@ -148,13 +149,13 @@ namespace
   //! throw an error if a constant given in the input file is a primary variables
   template <typename T>
   void assert_valid_input(const std::map<std::string, T>& variable_values,
-      const std::vector<std::pair<std::string, double>>& constants_from_input)
+      const std::vector<std::pair<std::string, Core::IO::InputField<double>>>& parameter_fields)
   {
-    const bool all_constants_from_input_valid =
-        std::all_of(constants_from_input.begin(), constants_from_input.end(),
+    const bool all_parameter_fields_valid =
+        std::all_of(parameter_fields.begin(), parameter_fields.end(),
             [&](const auto& var_name) { return variable_values.count(var_name.first) == 0; });
 
-    if (!all_constants_from_input_valid)
+    if (!all_parameter_fields_valid)
     {
       const auto join_keys = [](const auto& map)
       {
@@ -168,7 +169,7 @@ namespace
           "VARFUNCTION.\n\n"
           "Variables passed to Evaluate: {} \n"
           "Constants from Input: {}",
-          join_keys(variable_values).c_str(), join_keys(constants_from_input).c_str());
+          join_keys(variable_values).c_str(), join_keys(parameter_fields).c_str());
     }
   }
 }  // namespace
@@ -188,13 +189,20 @@ Core::Utils::try_create_symbolic_function_of_anything(
   {
     std::string component = function_lin_def.get<std::string>("VARFUNCTION");
 
-    std::vector<std::pair<std::string, double>> constants;
-    if (auto* constants_map = function_lin_def.get_if<std::map<std::string, double>>("CONSTANTS");
-        constants_map)
-    {
-      constants.insert(constants.end(), constants_map->begin(), constants_map->end());
-    }
+    //DEBUG
+    //std::cout << "Creating symbolic function of anything with component: " << component << std::endl;
 
+    std::vector<std::pair<std::string, Core::IO::InputField<double>>> constants; //"Constant" parameters from input
+
+    if (auto* constants_list = function_lin_def.get_if<Core::IO::InputParameterContainer::List>("PARAMETERS"))
+    {
+      for (const auto& entry : *constants_list)
+        {
+          std::string name = entry.get<std::string>("NAME");
+          auto field = entry.get<Core::IO::InputField<double>>("value");
+          constants.emplace_back(name, field);
+        }
+    }
     return std::make_shared<Core::Utils::SymbolicFunctionOfAnything>(component, constants);
   }
   else
@@ -538,8 +546,8 @@ std::vector<double> Core::Utils::SymbolicFunctionOfSpaceTime::evaluate_time_deri
 
 
 Core::Utils::SymbolicFunctionOfAnything::SymbolicFunctionOfAnything(
-    const std::string& component, std::vector<std::pair<std::string, double>> constants)
-    : constants_from_input_(std::move(constants))
+    const std::string& component, std::vector<std::pair<std::string, Core::IO::InputField<double>>> constants)
+    : parameter_fields_(std::move(constants))
 {
   // build the parser for the function evaluation
   auto symbolicexpression = std::make_shared<Core::Utils::SymbolicExpression<double>>(component);
@@ -552,7 +560,21 @@ Core::Utils::SymbolicFunctionOfAnything::SymbolicFunctionOfAnything(
 
 double Core::Utils::SymbolicFunctionOfAnything::evaluate(
     const std::vector<std::pair<std::string, double>>& variables,
-    const std::vector<std::pair<std::string, double>>& constants, const std::size_t component) const
+    const std::vector<std::pair<std::string, double>>& constants, //global constants!
+    const std::size_t component) const
+{
+  //DEBUG
+  std::cout << ">>>> EXECUTION: evaluate without inputfield <<<<" << std::endl;
+  return evaluate(variables, constants, component, 0); 
+  // We call for the new evaluate method and pass 0 as element_id
+}
+
+// For evaluation of inputfields
+double Core::Utils::SymbolicFunctionOfAnything::evaluate(
+    const std::vector<std::pair<std::string, double>>& variables,
+    const std::vector<std::pair<std::string, double>>& constants, //global constants!
+    const std::size_t component,
+    int element_id) const
 {
   // create map for variables
   std::map<std::string, double> variable_values;
@@ -561,20 +583,26 @@ double Core::Utils::SymbolicFunctionOfAnything::evaluate(
   std::copy(
       variables.begin(), variables.end(), std::inserter(variable_values, variable_values.begin()));
 
-  // add constants
+  // add global constants
   std::copy(
       constants.begin(), constants.end(), std::inserter(variable_values, variable_values.end()));
 
-  if (constants_from_input_.size() != 0)
+  // add "constants" from inputfield 
+  if (parameter_fields_.size() != 0) // if not empty
   {
-    // check if constants_from_input are valid
-    assert_valid_input<double>(variable_values, constants_from_input_);
-
-    // add constants from input
-    std::copy(constants_from_input_.begin(), constants_from_input_.end(),
-        std::inserter(variable_values, variable_values.end()));
+    // check if constants from input are valid
+    assert_valid_input<double>(variable_values, parameter_fields_);
+    for (const auto& [name, field] : parameter_fields_)
+    {
+      variable_values[name] = field.at(element_id);
+    }
   }
 
+  //DEBUG
+  std::cout << "[CHECK] variable_values at the end of evaluate for element ID " << element_id << std::endl;
+  for (const auto& [name, value] : variable_values) {
+      std::cout << "  - Name: " << name << " | Value: " << value << std::endl;
+  }
   // evaluate the function and return the result
   return expr_[component]->value(variable_values);
 }
@@ -583,6 +611,19 @@ double Core::Utils::SymbolicFunctionOfAnything::evaluate(
 std::vector<double> Core::Utils::SymbolicFunctionOfAnything::evaluate_derivative(
     const std::vector<std::pair<std::string, double>>& variables,
     const std::vector<std::pair<std::string, double>>& constants, const std::size_t component) const
+{
+  //DEBUG
+  //std::cout << ">>>> EXECUTION: evaluate_derivative without inputfield <<<<" << std::endl;
+  return evaluate_derivative(variables, constants, component, 0);
+  // We call for the new evaluate_derivative method and pass 0 as element_id to indicate that this is the evaluation without inputfield
+}
+
+// For evaluation of inputfields
+std::vector<double> Core::Utils::SymbolicFunctionOfAnything::evaluate_derivative(
+    const std::vector<std::pair<std::string, double>>& variables,
+    const std::vector<std::pair<std::string, double>>& constants, //global constant!
+    const std::size_t component,
+    int element_id) const
 {
   auto variables_FAD = convert_variable_values_to_fad_objects(variables);
 
@@ -594,19 +635,31 @@ std::vector<double> Core::Utils::SymbolicFunctionOfAnything::evaluate_derivative
   std::copy(variables_FAD.begin(), variables_FAD.end(),
       std::inserter(variable_values, variable_values.begin()));
 
-  // add constants
+  // add global constants
   std::copy(
       constants.begin(), constants.end(), std::inserter(constant_values, constant_values.begin()));
 
-
-  if (constants_from_input_.size() != 0)
+  // add element-wise constants from inputfield (defined as inputfields in VARFUNCTION)
+  if (parameter_fields_.size() != 0) // if defined
   {
-    // check if constants_from_input are valid
-    assert_valid_input<Sacado::Fad::DFad<double>>(variable_values, constants_from_input_);
+    // check if "constants" from input file are valid
+    assert_valid_input<Sacado::Fad::DFad<double>>(variable_values, parameter_fields_);
+    
+    // add "constants" parameters from input file
+    for (const auto& [name, field] : parameter_fields_)
+    {
+      constant_values[name]=field.at(element_id);
+    }
+  }
 
-    // add constants from input
-    std::copy(constants_from_input_.begin(), constants_from_input_.end(),
-        std::inserter(constant_values, constant_values.end()));
+  //DEBUG
+  std::cout << "[CHECK] variable_values at the end of evaluate_derivative for element ID " << element_id << std::endl;
+  for (const auto& [name, value] : variable_values) {
+      std::cout << "  - Name: " << name << " | Value: " << value << std::endl;
+  }
+      std::cout << "[CHECK] constant_values at the end of evaluate_derivative for element ID " << element_id << std::endl;
+  for (const auto& [name, value] : constant_values) {
+      std::cout << "  - Name: " << name << " | Value: " << value << std::endl;
   }
   return evaluate_and_assemble_expression_to_result_vector(
       variable_values, component, expr_, constant_values);
