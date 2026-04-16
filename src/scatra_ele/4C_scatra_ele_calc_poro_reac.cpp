@@ -133,7 +133,7 @@ void Discret::Elements::ScaTraEleCalcPoroReac<distype>::extract_element_and_node
 {
   // call base class routine
   poro::extract_element_and_node_values(ele, params, discretization, la);
-
+  //std::cout << "[CHECK scatra_ele_calc_poro_reac]" << std::endl;
   return;
 }
 

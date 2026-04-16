@@ -93,7 +93,8 @@ double Mat::PAR::REACTIONCOUPLING::ReactionWithPhiScaling::calc_rea_body_force_t
     const std::vector<double>& couprole,  //!< coupling role vector
     double
         scale_reac,   //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
-    double scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+    double scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+    int element_id
 )
 {
   // modify the phinp vector if necessary (e.g. for reference concentrations)
@@ -101,7 +102,7 @@ double Mat::PAR::REACTIONCOUPLING::ReactionWithPhiScaling::calc_rea_body_force_t
 
   // call the real evaluation
   return reaction_->calc_rea_body_force_term(
-      k, numscal, phinp_mod, constants, couprole, scale_reac, scale_phi);
+      k, numscal, phinp_mod, constants, couprole, scale_reac, scale_phi, element_id);
 }
 
 /*--------------------------------------------------------------------------------*
@@ -118,7 +119,8 @@ void Mat::PAR::REACTIONCOUPLING::ReactionWithPhiScaling::calc_rea_body_force_der
     const std::vector<double>& couprole,  //!< coupling role vector
     double
         scale_reac,   //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
-    double scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+    double scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+    int element_id
 )
 {
   // modify the phinp vector if necessary (e.g. for reference concentrations)
@@ -126,7 +128,7 @@ void Mat::PAR::REACTIONCOUPLING::ReactionWithPhiScaling::calc_rea_body_force_der
 
   // call the real evaluation
   reaction_->calc_rea_body_force_deriv(
-      k, numscal, derivs, phinp_mod, constants, couprole, scale_reac, scale_phi);
+      k, numscal, derivs, phinp_mod, constants, couprole, scale_reac, scale_phi, element_id);
 
   return;
 }
@@ -144,7 +146,8 @@ void Mat::PAR::REACTIONCOUPLING::ReactionWithPhiScaling::calc_rea_body_force_der
     const std::vector<double>& couprole,  //!< coupling role vector
     double
         scale_reac,   //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
-    double scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+    double scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+    int element_id
 )
 {
   // modify the phinp vector if necessary (e.g. for reference concentrations)
@@ -156,7 +159,7 @@ void Mat::PAR::REACTIONCOUPLING::ReactionWithPhiScaling::calc_rea_body_force_der
 
   // call the real evaluation
   reaction_->calc_rea_body_force_deriv_add_variables(
-      k, derivs, variables, constants, couprole, scale_reac, scale_phi);
+      k, derivs, variables, constants, couprole, scale_reac, scale_phi, element_id);
 
   return;
 }
@@ -205,7 +208,8 @@ double Mat::PAR::REACTIONCOUPLING::ReacStart::calc_rea_body_force_term(
     const std::vector<double>& couprole,  //!< coupling role vector
     double
         scale_reac,   //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
-    double scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+    double scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+    int element_id
 )
 {
   // modify the phinp vector for reaction start feature
@@ -213,7 +217,7 @@ double Mat::PAR::REACTIONCOUPLING::ReacStart::calc_rea_body_force_term(
 
   // call the real evaluation
   return reaction_->calc_rea_body_force_term(
-      k, numscal, phinp_mod, constants, couprole, scale_reac, scale_phi);
+      k, numscal, phinp_mod, constants, couprole, scale_reac, scale_phi, element_id);
 }
 
 /*--------------------------------------------------------------------------------*
@@ -229,7 +233,8 @@ void Mat::PAR::REACTIONCOUPLING::ReacStart::calc_rea_body_force_deriv(int k,  //
     const std::vector<double>& couprole,  //!< coupling role vector
     double
         scale_reac,   //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
-    double scale_phi  //!< scaling factor for scalar values (used for reference concentrations)
+    double scale_phi,  //!< scaling factor for scalar values (used for reference concentrations)
+    int element_id
 )
 {
   // modify the phinp vector for reaction start feature
@@ -240,7 +245,7 @@ void Mat::PAR::REACTIONCOUPLING::ReacStart::calc_rea_body_force_deriv(int k,  //
 
   // call reaction evaluation
   reaction_->calc_rea_body_force_deriv(
-      k, numscal, myderivs, phinp_mod, constants, couprole, scale_reac, scale_phi);
+      k, numscal, myderivs, phinp_mod, constants, couprole, scale_reac, scale_phi, element_id);
 
   for (int toderive = 0; toderive < numscal; toderive++)
   {
@@ -296,7 +301,8 @@ double Mat::PAR::REACTIONCOUPLING::SimpleMultiplicative::calc_rea_body_force_ter
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   double bftfac = 1.0;
@@ -324,8 +330,8 @@ void Mat::PAR::REACTIONCOUPLING::SimpleMultiplicative::calc_rea_body_force_deriv
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    const double
-        scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    const double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   for (int toderive = 0; toderive < numscal; toderive++)
@@ -373,7 +379,8 @@ double Mat::PAR::REACTIONCOUPLING::PowerMultiplicative::calc_rea_body_force_term
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   double bftfac = 1.0;
@@ -401,7 +408,8 @@ void Mat::PAR::REACTIONCOUPLING::PowerMultiplicative::calc_rea_body_force_deriv(
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   for (int toderive = 0; toderive < numscal; toderive++)
@@ -450,7 +458,8 @@ double Mat::PAR::REACTIONCOUPLING::Constant::calc_rea_body_force_term(int k,  //
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   return scale_reac;
@@ -467,7 +476,8 @@ void Mat::PAR::REACTIONCOUPLING::Constant::calc_rea_body_force_deriv(int k,  //!
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   // zero derivative -> do nothing
@@ -499,7 +509,8 @@ double Mat::PAR::REACTIONCOUPLING::MichaelisMenten::calc_rea_body_force_term(
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   double bftfac = 1.0;
@@ -527,7 +538,8 @@ void Mat::PAR::REACTIONCOUPLING::MichaelisMenten::calc_rea_body_force_deriv(
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   for (int toderive = 0; toderive < numscal; toderive++)
@@ -635,22 +647,22 @@ double Mat::PAR::REACTIONCOUPLING::ByFunction::calc_rea_body_force_term(
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient *
-                       //!< stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient *
+    int element_id     //!< stoichometry)
 )
 {
   switch (Global::Problem::instance()->n_dim())
   {
     case 1:
       return calc_rea_body_force_term_internal<1>(
-          k, numscal, phinp, constants, couprole, scale_reac);
+          k, numscal, phinp, constants, couprole, scale_reac, element_id);
     case 2:
       return calc_rea_body_force_term_internal<2>(
-          k, numscal, phinp, constants, couprole, scale_reac);
+          k, numscal, phinp, constants, couprole, scale_reac, element_id);
 
     case 3:
       return calc_rea_body_force_term_internal<3>(
-          k, numscal, phinp, constants, couprole, scale_reac);
+          k, numscal, phinp, constants, couprole, scale_reac, element_id);
 
     default:
       FOUR_C_THROW("Unsupported dimension {}.", Global::Problem::instance()->n_dim());
@@ -669,16 +681,31 @@ double Mat::PAR::REACTIONCOUPLING::ByFunction::calc_rea_body_force_term_internal
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
-)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id)
 {
   // copy phi vector in different format to be read by the function
   build_phi_vector_for_function(phinp, numscal);
 
   // evaluate reaction term
-  double bftfac = Global::Problem::instance()
-                      ->function_by_id<Core::Utils::FunctionOfAnything>(round(couprole[k]))
-                      .evaluate(variables_, constants, 0);
+  auto& func_base =
+    Global::Problem::instance()
+        ->function_by_id<Core::Utils::FunctionOfAnything>(round(couprole[k]));
+
+  const auto* func_sym =
+      dynamic_cast<const Core::Utils::SymbolicFunctionOfAnything*>(&func_base);
+
+  double bftfac = func_sym->evaluate(variables_, constants, 0, element_id);
+    
+  //DEBUG
+  //if (element_id % 1000 == 0) 
+  //{
+    //std::cout << "[CHECK scatra_reaction_coupling] Element ID: " << element_id << std::endl;
+    //for (const auto& [name, value] : constants) 
+    //{
+        //std::cout << "  " << name << " = " << value << std::endl;
+    //}
+  //}
 
   return scale_reac * bftfac;
 }
@@ -694,20 +721,21 @@ void Mat::PAR::REACTIONCOUPLING::ByFunction::calc_rea_body_force_deriv(
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   switch (Global::Problem::instance()->n_dim())
   {
     case 1:
       return calc_rea_body_force_deriv_internal<1>(
-          k, numscal, derivs, phinp, constants, couprole, scale_reac);
+          k, numscal, derivs, phinp, constants, couprole, scale_reac, element_id);
     case 2:
       return calc_rea_body_force_deriv_internal<2>(
-          k, numscal, derivs, phinp, constants, couprole, scale_reac);
+          k, numscal, derivs, phinp, constants, couprole, scale_reac, element_id);
     case 3:
       return calc_rea_body_force_deriv_internal<3>(
-          k, numscal, derivs, phinp, constants, couprole, scale_reac);
+          k, numscal, derivs, phinp, constants, couprole, scale_reac, element_id);
     default:
       FOUR_C_THROW("Unsupported dimension {}.", Global::Problem::instance()->n_dim());
   }
@@ -725,21 +753,35 @@ void Mat::PAR::REACTIONCOUPLING::ByFunction::calc_rea_body_force_deriv_internal(
         constants,  //!< vector containing values which are independent of the scalars (e.g.
                     //!< t,x,y,z)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   // copy phi vector in different format to be read by the function
   build_phi_vector_for_function(phinp, numscal);
 
   // evaluate the derivatives of the reaction term
-  std::vector<double> myderivs =
-      Global::Problem::instance()
-          ->function_by_id<Core::Utils::FunctionOfAnything>(round(couprole[k]))
-          .evaluate_derivative(variables_, constants, 0);
+  auto& func_base =
+    Global::Problem::instance()
+        ->function_by_id<Core::Utils::FunctionOfAnything>(round(couprole[k]));
+  const auto* func_sym =
+      dynamic_cast<const Core::Utils::SymbolicFunctionOfAnything*>(&func_base);
+  
+  std::vector<double> myderivs = func_sym->evaluate_derivative(variables_, constants, 0, element_id);
 
   // add it to derivs
   for (int toderive = 0; toderive < numscal; toderive++)
     derivs[toderive] += scale_reac * myderivs[toderive];
+
+  //DEBUG
+  //if (element_id % 1000 == 0) 
+  //{
+  //  std::cout << "[CHECK scatra_reaction_coupling_deriv] Element ID: " << element_id << std::endl;
+  //  for (const auto& [name, value] : constants) 
+  //  {
+  //      std::cout << "  " << name << " = " << value << std::endl;
+  //  }
+  //}
 }
 
 /*----------------------------------------------------------------------*
@@ -751,20 +793,21 @@ void Mat::PAR::REACTIONCOUPLING::ByFunction::calc_rea_body_force_deriv_add_varia
     const std::vector<std::pair<std::string, double>>&
         constants,                        //!< constants (including scalar values phinp)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   switch (Global::Problem::instance()->n_dim())
   {
     case 1:
       return calc_rea_body_force_deriv_add_variables_internal<1>(
-          k, derivs, variables, constants, couprole, scale_reac);
+          k, derivs, variables, constants, couprole, scale_reac, element_id);
     case 2:
       return calc_rea_body_force_deriv_add_variables_internal<2>(
-          k, derivs, variables, constants, couprole, scale_reac);
+          k, derivs, variables, constants, couprole, scale_reac, element_id);
     case 3:
       return calc_rea_body_force_deriv_add_variables_internal<3>(
-          k, derivs, variables, constants, couprole, scale_reac);
+          k, derivs, variables, constants, couprole, scale_reac, element_id);
     default:
       FOUR_C_THROW("Unsupported dimension {}.", Global::Problem::instance()->n_dim());
   }
@@ -780,14 +823,18 @@ void Mat::PAR::REACTIONCOUPLING::ByFunction::calc_rea_body_force_deriv_add_varia
     const std::vector<std::pair<std::string, double>>&
         constants,                        //!< constants (including scalar values phinp)
     const std::vector<double>& couprole,  //!< coupling role vector
-    double scale_reac  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    double scale_reac,  //!< scaling factor for reaction term (= reaction coefficient * stoichometry)
+    int element_id
 )
 {
   // evaluate the derivatives of the reaction term
-  std::vector<double> myderivs =
-      Global::Problem::instance()
-          ->function_by_id<Core::Utils::FunctionOfAnything>(round(couprole[k]))
-          .evaluate_derivative(variables, constants, 0);
+  auto& func_base =
+    Global::Problem::instance()
+        ->function_by_id<Core::Utils::FunctionOfAnything>(round(couprole[k]));
+  const auto* func_sym =
+      dynamic_cast<const Core::Utils::SymbolicFunctionOfAnything*>(&func_base);
+  
+      std::vector<double> myderivs = func_sym->evaluate_derivative(variables, constants, 0, element_id);
 
   if (myderivs.size() != derivs.size())
   {

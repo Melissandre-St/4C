@@ -813,7 +813,7 @@ template <Core::FE::CellType discretization_type>
 void Discret::Elements::ScaTraEleCalcPorofluidPressureBased<
     discretization_type>::set_advanced_reaction_terms(const int scalar_id,
     const std::shared_ptr<Mat::MatListReactions> material_reaction_list,
-    const double* gauss_point_coordinates)
+    const double* gauss_point_coordinates, const double scale, int element_id)
 {
   const std::shared_ptr<ScaTraEleReaManagerAdvReac> reaction_manager =
       advanced_reaction::rea_manager();
@@ -827,8 +827,15 @@ void Discret::Elements::ScaTraEleCalcPorofluidPressureBased<
   reaction_manager->add_to_rea_body_force(
       material_reaction_list->calc_rea_body_force_term(scalar_id,
           scatra_ele_calc::scatravarmanager_->phinp(), coupling_values_, gauss_point_coordinates,
-          time),
+          time, scale, element_id), // attribution of artificial scale value =1.0 (cf 4C_mat_list_reactions.hpp)
       scalar_id);
+
+  // DEBUG
+  //if (element_id % 1000 == 0) 
+  //{
+  //    std::cout << "[CHECK scatra_ele_calc_porofluid_pressure_based] Element ID: " << element_id << std::endl;
+  //} 
+  
 
   std::vector<std::pair<std::string, double>> empty_constants;
 
@@ -840,7 +847,7 @@ void Discret::Elements::ScaTraEleCalcPorofluidPressureBased<
       material_reaction_list->calc_rea_body_force_deriv_matrix(scalar_id,
           reaction_manager->get_rea_body_force_deriv_vector(scalar_id),
           scatra_ele_calc::scatravarmanager_->phinp(), coupling_values_, gauss_point_coordinates,
-          time);
+          time, scale, element_id);
 
       break;
     }
@@ -849,7 +856,7 @@ void Discret::Elements::ScaTraEleCalcPorofluidPressureBased<
       material_reaction_list->calc_rea_body_force_deriv_matrix_add_variables(scalar_id,
           reaction_manager->get_rea_body_force_deriv_vector_add_variables(scalar_id),
           scatra_ele_calc::scatravarmanager_->phinp(), coupling_values_, empty_constants,
-          gauss_point_coordinates, time);
+          gauss_point_coordinates, time, scale, element_id);
 
       break;
     }
@@ -860,7 +867,7 @@ void Discret::Elements::ScaTraEleCalcPorofluidPressureBased<
         material_reaction_list->calc_rea_body_force_deriv_matrix_add_variables(scalar_id,
             reaction_manager->get_rea_body_force_deriv_vector_add_variables(scalar_id),
             scatra_ele_calc::scatravarmanager_->phinp(), coupling_values_, empty_constants,
-            gauss_point_coordinates, time);
+            gauss_point_coordinates, time, scale, element_id);
       }
       break;
     }

@@ -292,6 +292,8 @@ void Discret::Elements::PoroFluidManager::VariableManagerInstat<nsd, nen>::evalu
 
   // call wrapped class
   this->varmanager_->evaluate_gp_variables(funct, derxy);
+  
+  //std::cout << "CHECK porofluid_pressure_based_ele_variablemanager" << std::endl;
 
   return;
 }
@@ -354,6 +356,8 @@ void Discret::Elements::PoroFluidManager::VariableManagerStruct<nsd,
   // add nodal displacements to point coordinates
   xyze += edispnp_;
 
+  //std::cout << "CHECK porofluid_pressure_based_ele_variablemanager2" << std::endl;
+
   return;
 };
 
@@ -382,6 +386,8 @@ void Discret::Elements::PoroFluidManager::VariableManagerStruct<nsd, nen>::evalu
 
   // call wrapped class
   this->varmanager_->evaluate_gp_variables(funct, derxy);
+
+  //std::cout << "CHECK porofluid_pressure_based_ele_variablemanager3" << std::endl;
 
   return;
 }
@@ -417,6 +423,8 @@ void Discret::Elements::PoroFluidManager::VariableManagerScalar<nsd,
   Core::FE::extract_my_values<Core::LinAlg::Matrix<nen, 1>>(
       *scalarnp, escalarnp_, la[ndsscalar_].lm_);
 
+  //std::cout << "CHECK porofluid_pressure_based_ele_variablemanager4" << std::endl;
+
   return;
 };
 
@@ -444,6 +452,8 @@ void Discret::Elements::PoroFluidManager::VariableManagerScalar<nsd, nen>::evalu
       gradscalarnp_[k].multiply(derxy, escalarnp_[k]);
     }
   }
+
+  //std::cout << "CHECK porofluid_pressure_based_ele_variablemanager5" << std::endl;
 
   return;
 }
@@ -540,6 +550,8 @@ void Discret::Elements::PoroFluidManager::VariableManagerMaximumNodalVolFracValu
 {
   // call wrapped class
   this->varmanager_->evaluate_gp_variables(funct, derxy);
+
+  //std::cout << "CHECK porofluid_pressure_based_ele_variablemanager6" << std::endl;
 
   return;
 }

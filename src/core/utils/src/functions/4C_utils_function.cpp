@@ -189,7 +189,7 @@ Core::Utils::try_create_symbolic_function_of_anything(
   {
     std::string component = function_lin_def.get<std::string>("VARFUNCTION");
 
-    //DEBUG
+    // DEBUG
     //std::cout << "Creating symbolic function of anything with component: " << component << std::endl;
 
     std::vector<std::pair<std::string, Core::IO::InputField<double>>> constants; //"Constant" parameters from input
@@ -563,10 +563,9 @@ double Core::Utils::SymbolicFunctionOfAnything::evaluate(
     const std::vector<std::pair<std::string, double>>& constants, //global constants!
     const std::size_t component) const
 {
-  //DEBUG
-  std::cout << ">>>> EXECUTION: evaluate without inputfield <<<<" << std::endl;
-  return evaluate(variables, constants, component, 0); 
-  // We call for the new evaluate method and pass 0 as element_id
+  // DEBUG
+  //std::cout << ">>>> EXECUTION: evaluate without taking into accoung element_id <<<<" << std::endl;
+  return evaluate(variables, constants, component, 0); // We call for the new evaluate method and pass 0 as element_id
 }
 
 // For evaluation of inputfields
@@ -598,11 +597,11 @@ double Core::Utils::SymbolicFunctionOfAnything::evaluate(
     }
   }
 
-  //DEBUG
-  std::cout << "[CHECK] variable_values at the end of evaluate for element ID " << element_id << std::endl;
-  for (const auto& [name, value] : variable_values) {
-      std::cout << "  - Name: " << name << " | Value: " << value << std::endl;
-  }
+  // DEBUG
+  //std::cout << "[CHECK] variable_values at the end of evaluate for element ID " << element_id << std::endl;
+  //for (const auto& [name, value] : variable_values) {
+  //  std::cout << "  - Name: " << name << " | Value: " << value << std::endl;
+  //}
   // evaluate the function and return the result
   return expr_[component]->value(variable_values);
 }
@@ -612,10 +611,9 @@ std::vector<double> Core::Utils::SymbolicFunctionOfAnything::evaluate_derivative
     const std::vector<std::pair<std::string, double>>& variables,
     const std::vector<std::pair<std::string, double>>& constants, const std::size_t component) const
 {
-  //DEBUG
-  //std::cout << ">>>> EXECUTION: evaluate_derivative without inputfield <<<<" << std::endl;
-  return evaluate_derivative(variables, constants, component, 0);
-  // We call for the new evaluate_derivative method and pass 0 as element_id to indicate that this is the evaluation without inputfield
+  // DEBUG
+  //std::cout << ">>>> EXECUTION: evaluate_derivative without taking into account element_id <<<<" << std::endl;
+  return evaluate_derivative(variables, constants, component, 0); // We call for the new evaluate_derivative method and pass 0 as element_id to indicate that this is the evaluation without inputfield
 }
 
 // For evaluation of inputfields
@@ -652,15 +650,15 @@ std::vector<double> Core::Utils::SymbolicFunctionOfAnything::evaluate_derivative
     }
   }
 
-  //DEBUG
-  std::cout << "[CHECK] variable_values at the end of evaluate_derivative for element ID " << element_id << std::endl;
-  for (const auto& [name, value] : variable_values) {
-      std::cout << "  - Name: " << name << " | Value: " << value << std::endl;
-  }
-      std::cout << "[CHECK] constant_values at the end of evaluate_derivative for element ID " << element_id << std::endl;
-  for (const auto& [name, value] : constant_values) {
-      std::cout << "  - Name: " << name << " | Value: " << value << std::endl;
-  }
+  // DEBUG
+  //std::cout << "[CHECK] variable_values at the end of evaluate_derivative for element ID " << element_id << std::endl;
+  //for (const auto& [name, value] : variable_values) {
+  //    std::cout << "  - Name: " << name << " | Value: " << value << std::endl;
+  //}
+  //std::cout << "[CHECK] constant_values at the end of evaluate_derivative for element ID " << element_id << std::endl;
+  //for (const auto& [name, value] : constant_values) {
+  //    std::cout << "  - Name: " << name << " | Value: " << value << std::endl;
+  //}
   return evaluate_and_assemble_expression_to_result_vector(
       variable_values, component, expr_, constant_values);
 }
