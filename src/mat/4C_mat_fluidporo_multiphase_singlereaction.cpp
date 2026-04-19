@@ -186,13 +186,12 @@ void Mat::PAR::FluidPoroSingleReaction::evaluate_function_internal(std::vector<d
   // evaluate the reaction term & derivatives
   const auto& func_base = Global::Problem::instance()
                             ->function_by_id<Core::Utils::FunctionOfAnything>(functID_);
+  
   const auto* func_sym = dynamic_cast<const Core::Utils::SymbolicFunctionOfAnything*>(&func_base);
 
-  double curval;
-  std::vector<double> curderivs;
-
-  curval = func_sym->evaluate(variables, constants, 0, element_id);
-  curderivs = func_sym->evaluate_derivative(variables, constants, 0, element_id);
+  double curval = func_sym->evaluate(variables, constants, 0, element_id);
+  
+  std::vector<double> curderivs = func_sym->evaluate_derivative(variables, constants, 0, element_id);
 
   // fill the output vector
   for (int k = 0; k < totalnummultiphasedof_; k++)

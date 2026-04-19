@@ -764,6 +764,7 @@ void Mat::PAR::REACTIONCOUPLING::ByFunction::calc_rea_body_force_deriv_internal(
   auto& func_base =
     Global::Problem::instance()
         ->function_by_id<Core::Utils::FunctionOfAnything>(round(couprole[k]));
+  
   const auto* func_sym =
       dynamic_cast<const Core::Utils::SymbolicFunctionOfAnything*>(&func_base);
   
@@ -831,10 +832,11 @@ void Mat::PAR::REACTIONCOUPLING::ByFunction::calc_rea_body_force_deriv_add_varia
   auto& func_base =
     Global::Problem::instance()
         ->function_by_id<Core::Utils::FunctionOfAnything>(round(couprole[k]));
+
   const auto* func_sym =
       dynamic_cast<const Core::Utils::SymbolicFunctionOfAnything*>(&func_base);
   
-      std::vector<double> myderivs = func_sym->evaluate_derivative(variables, constants, 0, element_id);
+  std::vector<double> myderivs = func_sym->evaluate_derivative(variables, constants, 0, element_id);
 
   if (myderivs.size() != derivs.size())
   {

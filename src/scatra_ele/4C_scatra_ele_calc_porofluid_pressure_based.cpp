@@ -2318,10 +2318,19 @@ auto Discret::Elements::ScaTraEleInternalVariableManagerPorofluidPressureBased<n
   }
   varfunction_variables.emplace_back("porosity", phase_manager_->porosity());
 
-  const auto relative_mobility = Global::Problem::instance()
-                                     ->function_by_id<Core::Utils::FunctionOfAnything>(
-                                         relative_mobility_funct_id_[current_scalar])
-                                     .evaluate(varfunction_variables, varfunction_constants, 0);
+  const auto& func_base = Global::Problem::instance()
+                              ->function_by_id<Core::Utils::FunctionOfAnything>(
+                                  relative_mobility_funct_id_[current_scalar]);
+  
+  const auto* func_sym = dynamic_cast<const Core::Utils::SymbolicFunctionOfAnything*>(&func_base);
+
+  const int element_id = phase_manager_->element()->id();
+
+  const auto relative_mobility = func_sym->evaluate(
+        varfunction_variables, varfunction_constants, 0, element_id);
+
+  //std::cout << "[CHECK] Relative mobility for element " << element_id << ": " << relative_mobility
+  //         << std::endl;
 
   return relative_mobility;
 }

@@ -203,10 +203,18 @@ Core::Utils::try_create_symbolic_function_of_anything(
           constants.emplace_back(name, field);
         }
     }
+
+    // DEBUG
+    //std::cout << "[CHECK utils_function] Constants:" << std::endl;
+    //for (const auto& [name, field] : constants)
+    //{
+    //  std::cout << "  Name: " << name << std::endl;
+    //}
     return std::make_shared<Core::Utils::SymbolicFunctionOfAnything>(component, constants);
   }
   else
   {
+    //std::cout << "[CHECK utils_function2] No VARFUNCTION found in the input parameters. Returning nullptr." << std::endl;
     return nullptr;
   }
 }
@@ -596,6 +604,11 @@ double Core::Utils::SymbolicFunctionOfAnything::evaluate(
       variable_values[name] = field.at(element_id);
     }
   }
+  //else
+  //{
+    // DEBUG
+    //std::cout << "No parameter fields defined for this function." << std::endl;
+  //} 
 
   // DEBUG
   //std::cout << "[CHECK] variable_values at the end of evaluate for element ID " << element_id << std::endl;
