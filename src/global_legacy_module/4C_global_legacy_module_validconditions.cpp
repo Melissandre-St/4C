@@ -370,8 +370,10 @@ std::vector<Core::Conditions::ConditionDefinition> Global::valid_conditions()
 
     cond.add_component(one_of({
         parameter<int>("FUNCT", {.description = "ID of the function for initial field"}),
-        input_field<double>("SCALAR_INPUT_FIELD", {.description = "Scalar input field for initial field"}), // temperature, porosity, pressure etc
-        input_field<std::vector<double>>("VECTOR_INPUT_FIELD", {.description = "Multi-component input field for initial field"}), // velocity, ScaTra, PoroMultiFluid etc        
+        input_field<double>("POINT_SCALAR_INPUT_FIELD", {.description = "Scalar input field for initial field (basis: points)"}), // temperature, porosity, pressure etc
+        input_field<double>("CELL_SCALAR_INPUT_FIELD", {.description = "Scalar input field for initial field (basis: cells)"}), // temperature, porosity, pressure etc
+        input_field<std::vector<double>>("POINT_VECTOR_INPUT_FIELD", {.description = "Multi-component input field (basis: points)"}), // velocity, ScaTra, PoroMultiFluid etc
+        input_field<std::vector<double>>("CELL_VECTOR_INPUT_FIELD", {.description = "Multi-component input field (basis: cells)"}), // velocity, ScaTra, PoroMultiFluid etc
         }));
         
     condlist.emplace_back(cond);

@@ -179,11 +179,6 @@ void Core::FE::do_initial_field(const Core::Utils::FunctionManager& function_man
 
     if ((total_numdof % numdof) != 0) FOUR_C_THROW("illegal dof set number");
 
-    std::vector<double> vec_vals;
-    if (auto vector_field = params.get_if<Core::IO::InputField<std::vector<double>>>("VECTOR_INPUT_FIELD"))
-    {
-      vec_vals = vector_field->at(node->id());
-    }
 
     // now loop over all relevant DOFs
     for (int j = 0; j < total_numdof; ++j)
@@ -196,33 +191,111 @@ void Core::FE::do_initial_field(const Core::Utils::FunctionManager& function_man
       {
         if (localdof == locid)
         {
-          double val = 0.0; 
+          double val = 0.0;
+          bool val_assigned = false;
 
           // 1. We defined a function's ID
           if (auto funct_num = params.get_if<int>("FUNCT"); funct_num && *funct_num > 0)
           {
             val = function_manager.function_by_id<Core::Utils::FunctionOfSpaceTime>(*funct_num)
                       .evaluate(node->x(), time, localdof);
+            val_assigned = true;
           }
-          // 2. We defined a scalar input field
-          else if (auto scalar_field = params.get_if<Core::IO::InputField<double>>("SCALAR_INPUT_FIELD"))
+          // 2a. Point-based scalar input field (basis: points) — lookup by node ID
+          else if (auto point_scalar_field = params.get_if<Core::IO::InputField<double>>("POINT_SCALAR_INPUT_FIELD"))
           {
-            val = scalar_field->at(node->id());
+            try {
+              val = point_scalar_field->at(node->id());
+              val_assigned = true;
+            }
+            catch (...) {
+              // node not in field (outside defined zone)
+            }
           }
-          // 3. We defined a vector input field
-          else if (!vec_vals.empty())
+
+          // 2b. Cell-based scalar input field (basis: cells) — lookup by adjacent element IDs
+          else if (auto cell_scalar_field = params.get_if<Core::IO::InputField<double>>("CELL_SCALAR_INPUT_FIELD"))
           {
+            double sum = 0.0;
+            int count = 0;
+            for (auto elem : elements)
+            {
+              try
+              {
+                sum += cell_scalar_field->at(elem.user_element()->id());
+                count++;
+              }
+              catch (...)
+              {
+                // element not in field (outside defined zone)
+              }
+            }
+
+            if (count > 0)
+            {
+              val = sum / count; // We take the mean value of adjacent elements
+              val_assigned = true;
+            }
+          }
+
+          // 3a. Point-based vector input field (basis: points) — lookup by node ID
+          else if (auto point_vector_field = params.get_if<Core::IO::InputField<std::vector<double>>>("POINT_VECTOR_INPUT_FIELD"))
+          {
+            std::vector<double> vec_vals;
+            try {
+              vec_vals = point_vector_field->at(node->id());
+            }
+            catch (...) {
+              // node not in field (outside defined zone)
+            }
+
             if (localdof < static_cast<int>(vec_vals.size()))
             {
               val = vec_vals[localdof];
-            }           
+              val_assigned = true;
+            }
+          }
+
+          // 3b. Cell-based vector input field (basis: cells) — lookup by adjacent element IDs
+          else if (auto cell_vector_field = params.get_if<Core::IO::InputField<std::vector<double>>>("CELL_VECTOR_INPUT_FIELD"))
+          {
+            std::vector<double> sum_vec;
+            int count = 0;
+            for (auto elem : elements)
+            {
+              try
+              {
+                std::vector<double> current_vec = cell_vector_field->at(elem.user_element()->id());
+                if (sum_vec.empty()) sum_vec.resize(current_vec.size(), 0.0);
+                for (size_t k = 0; k < current_vec.size(); ++k)
+                  sum_vec[k] += current_vec[k];
+                count++;
+              }
+              catch (...)
+              {
+                // element not in field (outside defined zone)
+              }
+            }
+
+            if (count > 0)
+            {
+              for (double& v : sum_vec) v /= count;
+              if (localdof < static_cast<int>(sum_vec.size()))
+              {
+                val = sum_vec[localdof];
+                val_assigned = true;
+              }
+            }
           }
 
           // assign value
+          if(val_assigned)
+          {
           const int gid = node_dofs[j];
           const int lid = fieldvector.get_map().lid(gid);
           if (lid < 0) FOUR_C_THROW("Global id {} not on this proc in system vector", gid);
           fieldvector.get_values()[lid] = val;
+          }
         }
       }
     }
