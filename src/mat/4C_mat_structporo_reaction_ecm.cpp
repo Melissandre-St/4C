@@ -74,18 +74,24 @@ void Mat::StructPoroReactionECM::setup(int numgp, const Discret::Elements::Fiber
     const std::optional<Discret::Elements::CoordinateSystem>& coord_system, int eleGID)
 {
   StructPoroReaction::setup(numgp, fibers, coord_system, eleGID);
+}
+
+void Mat::StructPoroReactionECM::post_setup(const Teuchos::ParameterList& params, const int eleGID)
+{
+  StructPoroReaction::post_setup(params, eleGID);
+
   refporosity_old_ = params_->init_porosity_.at(eleGID);
 
   double dpsidphiref = 0.0;
-  Teuchos::ParameterList params;
-  params_->poro_law_->constitutive_derivatives(params, 0.0, 1.0, params_->init_porosity_.at(eleGID),
+  Teuchos::ParameterList poro_params;
+  params_->poro_law_->constitutive_derivatives(poro_params, 0.0, 1.0, params_->init_porosity_.at(eleGID),
       refporosity_, nullptr, nullptr, nullptr, &dpsidphiref, nullptr);
 
   const double initphi = params_->init_porosity_.at(eleGID);
   const double deltaphi = refporosity_ - initphi;
 
-  chempot_.resize(numgp, 0.0);
-  chempot_init_.resize(numgp, 0.0);
+  chempot_.resize(numgp_, 0.0);
+  chempot_init_.resize(numgp_, 0.0);
 
   for (std::vector<double>::size_type i = 0; i < chempot_init_.size(); i++)
     chempot_init_[i] = -(1.0 - deltaphi / (1.0 - initphi)) / mat_->density(eleGID) * dpsidphiref;

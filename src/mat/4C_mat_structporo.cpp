@@ -113,10 +113,28 @@ Mat::StructPoro::StructPoro(Mat::PAR::StructPoro* params)
 void Mat::StructPoro::poro_setup(int numgp, const Discret::Elements::Fibers& fibers,
     const std::optional<Discret::Elements::CoordinateSystem>& coord_system, int eleGID)
 {
-  porosity_ = std::make_shared<std::vector<double>>(numgp, params_->init_porosity_.at(eleGID));
+  numgp_ = numgp;
+  // Placeholder values: mesh-based input fields are not available yet during mesh reading.
+  porosity_ = std::make_shared<std::vector<double>>(numgp, 0.0);
   surf_porosity_ = std::make_shared<std::map<int, std::vector<double>>>();
 
   is_initialized_ = true;
+}
+
+void Mat::StructPoro::initialize_porosity_values(int eleGID)
+{
+  reference_porosity_ = params_->init_porosity_.at(eleGID);
+  std::fill(porosity_->begin(), porosity_->end(), reference_porosity_);
+  porosity_values_initialized_ = true;
+}
+
+double Mat::StructPoro::reference_porosity(int eleGID) const
+{
+  if (porosity_values_initialized_) return reference_porosity_;
+
+  if (porosity_ != nullptr && !porosity_->empty()) return porosity_->front();
+
+  return params_->init_porosity_.at(eleGID);
 }
 
 inline Core::Materials::MaterialType Mat::StructPoro::poro_law_type() const
@@ -128,10 +146,11 @@ double Mat::StructPoro::inv_bulk_modulus() const { return params_->poro_law_->in
 
 double Mat::StructPoro::density(int eleGID) const
 {
-  if (params_->init_porosity_.at(eleGID) == 1.0)
+  const double init_porosity = reference_porosity(eleGID);
+  if (init_porosity == 1.0)
     return mat_->density(eleGID);
   else
-    return ((1.0 - params_->init_porosity_.at(eleGID)) * mat_->density(eleGID));
+    return ((1.0 - init_porosity) * mat_->density(eleGID));
 }
 
 double Mat::StructPoro::density_solid_phase(int eleGID) const { return mat_->density(eleGID); }
@@ -210,11 +229,19 @@ void Mat::StructPoro::unpack(Core::Communication::UnpackBuffer& buffer)
   else
     mat_ = nullptr;
 
+  if (porosity_ != nullptr && !porosity_->empty())
+  {
+    reference_porosity_ = porosity_->front();
+    porosity_values_initialized_ = true;
+  }
+
   is_initialized_ = true;
 }
 
 void Mat::StructPoro::post_setup(const Teuchos::ParameterList& params, const int eleGID)
 {
+  initialize_porosity_values(eleGID);
+
   // Forward post_setup call to actual solid material
   mat_->post_setup(params, eleGID);
 }
@@ -249,8 +276,7 @@ void Mat::StructPoro::compute_porosity(const Teuchos::ParameterList& params, dou
     double* dphi_dpp, bool save, int eleGID)
 {
   compute_porosity(
-      params_
-          ->init_porosity_.at(eleGID),  // reference porosity equals initial porosity for non reactive material
+      reference_porosity(eleGID),  // reference porosity equals initial porosity for non reactive material
       press, J, gp, porosity, dphi_dp, dphi_dJ, dphi_dJdp, dphi_dJJ, dphi_dpp,
       nullptr,  // reference porosity is constant (non reactive) -> derivative not needed
       save);
@@ -308,7 +334,7 @@ void Mat::StructPoro::constitutive_derivatives(const Teuchos::ParameterList& par
   if (porosity == 0.0) FOUR_C_THROW("porosity equals zero!! Wrong initial porosity?");
 
   constitutive_derivatives(
-      params, press, J, porosity, params_->init_porosity_.at(eleGID), dW_dp, dW_dphi, dW_dJ, dW_dphiref, W);
+      params, press, J, porosity, reference_porosity(eleGID), dW_dp, dW_dphi, dW_dJ, dW_dphiref, W);
 }
 
 void Mat::StructPoro::constitutive_derivatives(const Teuchos::ParameterList& params, double press,

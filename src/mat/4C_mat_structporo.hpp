@@ -398,6 +398,21 @@ namespace Mat
 
     //! flag indicating initialization of attributes
     bool is_initialized_;
+
+    //! number of gauss points (set in poro_setup)
+    int numgp_{0};
+
+    //! whether element-wise initial porosity values were read from the input field
+    bool porosity_values_initialized_{false};
+
+    //! initial/reference porosity of this element (set in post_setup)
+    double reference_porosity_{0.0};
+
+    //! read INITPOROSITY from the (possibly mesh-based) input field into GP storage
+    void initialize_porosity_values(int eleGID);
+
+    //! reference porosity for this material instance (element-local after post_setup)
+    [[nodiscard]] double reference_porosity(int eleGID) const;
   };
 
 }  // namespace Mat

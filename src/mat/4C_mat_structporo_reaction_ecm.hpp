@@ -128,6 +128,8 @@ namespace Mat
         const Discret::Elements::Fibers& fibers,
         const std::optional<Discret::Elements::CoordinateSystem>& coord_system, int eleGID) override;
 
+    void post_setup(const Teuchos::ParameterList& params, const int eleGID) override;
+
     /// Return quick accessible material parameter data
     Core::Mat::PAR::Parameter* parameter() const override { return params_; }
 
