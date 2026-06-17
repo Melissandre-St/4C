@@ -3068,7 +3068,7 @@ std::unordered_map<Core::Materials::MaterialType, Core::IO::InputSpec> Global::v
         {
             parameter<int>("MATID", {.description = "ID of structure material"}),
             parameter<int>("POROLAWID", {.description = "ID of porosity law"}),
-            parameter<double>("INITPOROSITY", {.description = "initial porosity of porous medium"}),
+            input_field<double>("INITPOROSITY", {.description = "initial porosity of porous medium"}),
         },
         {.description = "wrapper for structure poroelastic material"});
   }
@@ -3203,7 +3203,7 @@ std::unordered_map<Core::Materials::MaterialType, Core::IO::InputSpec> Global::v
         {
             parameter<int>("MATID", {.description = "ID of structure material"}),
             parameter<int>("POROLAWID", {.description = "ID of porosity law"}),
-            parameter<double>("INITPOROSITY", {.description = "initial porosity of porous medium"}),
+            input_field<double>("INITPOROSITY", {.description = "initial porosity of porous medium"}),
             parameter<int>(
                 "DOFIDREACSCALAR", {.description = "Id of DOF within scalar transport problem, "
                                                    "which controls the reaction"}),
@@ -3218,7 +3218,7 @@ std::unordered_map<Core::Materials::MaterialType, Core::IO::InputSpec> Global::v
         {
             parameter<int>("MATID", {.description = "ID of structure material"}),
             parameter<int>("POROLAWID", {.description = "ID of porosity law"}),
-            parameter<double>("INITPOROSITY", {.description = "initial porosity of porous medium"}),
+            input_field<double>("INITPOROSITY", {.description = "initial porosity of porous medium"}),
             parameter<double>("DENSCOLLAGEN", {.description = "density of collagen"}),
             parameter<int>(
                 "DOFIDREACSCALAR", {.description = "Id of DOF within scalar transport problem, "

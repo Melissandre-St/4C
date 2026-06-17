@@ -16,6 +16,7 @@
 #include "4C_inpar_structure.hpp"
 #include "4C_linalg_tensor.hpp"
 #include "4C_solid_ele_calc_lib.hpp"
+#include "4C_io_input_field.hpp"
 
 FOUR_C_NAMESPACE_OPEN
 
@@ -74,7 +75,7 @@ namespace Discret
           Teuchos::ParameterList& params, Core::LinAlg::SerialDenseMatrix& stiffness_matrix);
 
       void poro_setup(
-          Mat::StructPoro& porostructmat, const Core::IO::InputParameterContainer& container);
+          Mat::StructPoro& porostructmat, const Core::IO::InputParameterContainer& container, int eleGID);
 
      private:
       /// static values for matrix sizes

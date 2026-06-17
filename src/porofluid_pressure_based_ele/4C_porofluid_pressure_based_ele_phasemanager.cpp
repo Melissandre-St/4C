@@ -19,6 +19,7 @@
 #include "4C_porofluid_pressure_based_ele_parameter.hpp"
 #include "4C_porofluid_pressure_based_ele_variablemanager.hpp"
 #include "4C_utils_enum.hpp"
+#include "4C_io_input_field.hpp"
 
 #include <Teuchos_ParameterList.hpp>
 
@@ -328,7 +329,8 @@ void Discret::Elements::PoroFluidManager::PhaseManagerCore::setup(
       std::static_pointer_cast<Mat::StructPoro>(ele_->material(1));
 
   invbulkmodulussolid_ = structmat->inv_bulk_modulus();
-  soliddensity_ = structmat->density_solid_phase();
+  int eleGID = ele->id();
+  soliddensity_ = structmat->density_solid_phase(eleGID);
 
   for (int iphase = 0; iphase < numfluidphases_; iphase++)
   {

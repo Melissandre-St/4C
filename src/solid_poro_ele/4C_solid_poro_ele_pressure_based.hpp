@@ -19,6 +19,7 @@
 #include "4C_solid_poro_ele_factory.hpp"
 #include "4C_solid_poro_ele_properties.hpp"
 #include "4C_structure_new_elements_paramsinterface.hpp"
+#include "4C_io_input_field.hpp"
 
 #include <memory>
 

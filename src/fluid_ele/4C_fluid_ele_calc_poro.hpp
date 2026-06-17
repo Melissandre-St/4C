@@ -14,6 +14,7 @@
 #include "4C_fluid_ele_calc.hpp"
 #include "4C_inpar_structure.hpp"
 #include "4C_utils_singleton_owner.hpp"
+#include "4C_io_input_field.hpp"
 
 FOUR_C_NAMESPACE_OPEN
 
@@ -197,7 +198,7 @@ namespace Discret
           const Core::LinAlg::Matrix<nen_, 1>* eporositydot,
           const Core::LinAlg::Matrix<nen_, 1>* eporositydotn,
           std::shared_ptr<Core::Mat::Material> mat, bool isale,
-          const Core::FE::GaussIntegration& intpoints);
+          const Core::FE::GaussIntegration& intpoints, Discret::Elements::Fluid* ele);
 
       /*!
           \brief evaluate function for Fluid element for porous flow
@@ -248,7 +249,7 @@ namespace Discret
           const Core::LinAlg::Matrix<nen_, 1>& echist,
           const Core::LinAlg::Matrix<nen_, 1>* eporositynp,
           std::shared_ptr<Core::Mat::Material> mat, bool isale,
-          const Core::FE::GaussIntegration& intpoints);
+          const Core::FE::GaussIntegration& intpoints, Discret::Elements::Fluid* ele);
 
       /*!
         \brief calculate element matrix and rhs for porous flow
@@ -303,7 +304,7 @@ namespace Discret
           Core::LinAlg::Matrix<(nsd_ + 1) * nen_, (nsd_ + 1) * nen_>& estif,
           Core::LinAlg::Matrix<(nsd_ + 1) * nen_, 1>& eforce,
           std::shared_ptr<const Core::Mat::Material> material, bool isale,
-          const Core::FE::GaussIntegration& intpoints);
+          const Core::FE::GaussIntegration& intpoints, Discret::Elements::Fluid* ele);
 
       /*!
         \brief calculate off diagonal element matrix and rhs for porous flow
@@ -352,7 +353,7 @@ namespace Discret
           Core::LinAlg::Matrix<(nsd_ + 1) * nen_, nsd_ * nen_>& ecoupl,
           Core::LinAlg::Matrix<(nsd_ + 1) * nen_, 1>& eforce,
           std::shared_ptr<const Core::Mat::Material> material, bool isale,
-          const Core::FE::GaussIntegration& intpoints);
+          const Core::FE::GaussIntegration& intpoints, Discret::Elements::Fluid* ele);
 
       /*!
         \brief linearisation of momentum equation in the case of mesh motion 3-D for Poroelasticity
@@ -597,7 +598,7 @@ namespace Discret
       virtual void compute_porosity(Teuchos::ParameterList& params, const double& press,
           const double& J, const int& gp, const Core::LinAlg::Matrix<nen_, 1>& shapfct,
           const Core::LinAlg::Matrix<nen_, 1>* myporosity, double& porosity, double* dphi_dp,
-          double* dphi_dJ, double* dphi_dJdp, double* dphi_dJJ, double* dphi_dpp, bool save);
+          double* dphi_dJ, double* dphi_dJdp, double* dphi_dJJ, double* dphi_dpp, bool save, int eleGID);
 
       /*!
        \brief evaluate pressure equation (i.e. continuity equation for standard poro elements)
@@ -709,7 +710,7 @@ namespace Discret
           Core::LinAlg::Matrix<nen_, nen_>& ppmat, Core::LinAlg::Matrix<nen_, 1>& preforce,
           Core::LinAlg::Matrix<nsd_, nen_>& velforce,
           std::shared_ptr<const Core::Mat::Material> material,
-          const Core::FE::GaussIntegration& intpoints);
+          const Core::FE::GaussIntegration& intpoints, Discret::Elements::Fluid* ele);
 
       /*!
         \brief Gauss point loop for evaluation of off-diagonal terms
@@ -757,7 +758,7 @@ namespace Discret
           Core::LinAlg::Matrix<nen_ * nsd_, nen_ * nsd_>& ecoupl_u,
           Core::LinAlg::Matrix<nen_, nen_ * nsd_>& ecoupl_p,
           std::shared_ptr<const Core::Mat::Material> material,
-          const Core::FE::GaussIntegration& intpoints);
+          const Core::FE::GaussIntegration& intpoints, Discret::Elements::Fluid* ele);
 
       /*!
         \brief Evaluation of gauss point values (diagonal terms)
@@ -890,7 +891,7 @@ namespace Discret
           const Core::LinAlg::Matrix<nsd_, nen_>& egridv,
           const Core::LinAlg::Matrix<nsd_, nen_ * nsd_>& lin_resM_Dus,
           const Core::LinAlg::Matrix<nsd_, nen_ * nsd_>& lin_resM_Dus_gridvel,
-          Core::LinAlg::Matrix<nen_, nen_ * nsd_>& ecoupl_p);
+          Core::LinAlg::Matrix<nen_, nen_ * nsd_>& ecoupl_p, int eleGID);
 
       //! computation of material derivatives
       double setup_material_derivatives();
@@ -899,7 +900,7 @@ namespace Discret
       void get_struct_material(Discret::Elements::Fluid* ele);
 
       //! get material parameters of poro fluid element
-      void get_material_parameters(std::shared_ptr<const Core::Mat::Material> material);
+      void get_material_parameters(std::shared_ptr<const Core::Mat::Material> material, int eleGID);
 
       //! compute spatial reactive term (darcy term)
       void compute_spatial_reaction_terms(
@@ -933,7 +934,7 @@ namespace Discret
           const Core::LinAlg::Matrix<nsd_, nsd_>& defgrd,
           const Core::LinAlg::Matrix<nsd_, nen_>& edispnp,
           const Core::LinAlg::Matrix<nsd_, nen_>& edispn,
-          const Core::LinAlg::Matrix<nsd_ * nsd_, nsd_>& F_X, int gp, bool computeLinOD);
+          const Core::LinAlg::Matrix<nsd_ * nsd_, nsd_>& F_X, int gp, bool computeLinOD, int eleGID);
 
       virtual int compute_volume(Teuchos::ParameterList& params,  //!< parameters
           Discret::Elements::Fluid* ele,                          //!< current fluid element

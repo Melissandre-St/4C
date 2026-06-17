@@ -15,6 +15,7 @@
 #include "4C_fem_general_utils_gausspoints.hpp"
 #include "4C_solid_poro_ele_calc_lib.hpp"
 #include "4C_solid_poro_ele_properties.hpp"
+#include "4C_io_input_field.hpp"
 
 FOUR_C_NAMESPACE_OPEN
 
@@ -61,7 +62,7 @@ namespace Discret
           SolidPoroOffDiagonalBlockMatrices<porosity_formulation>& off_diagonal_block_matrices);
 
       void poro_setup(
-          Mat::StructPoro& porostructmat, const Core::IO::InputParameterContainer& container);
+          Mat::StructPoro& porostructmat, const Core::IO::InputParameterContainer& container, int eleGID);
 
      private:
       /// static values for matrix sizes
