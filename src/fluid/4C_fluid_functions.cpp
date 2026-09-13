@@ -2383,8 +2383,16 @@ FLD::WeaklyCompressibleEtienneFSIFluidFunction::WeaklyCompressibleEtienneFSIFlui
 }
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
+// Case with 3 arguments
 double FLD::WeaklyCompressibleEtienneFSIFluidFunction::evaluate(
-    std::span<const double> xp, const double t, const std::size_t component) const
+    std::span<const double> x, double t, std::size_t component) const
+{
+    return evaluate(x, t, component, 0);
+}
+
+// Case with spatially varying material properties (inputfield)
+double FLD::WeaklyCompressibleEtienneFSIFluidFunction::evaluate(
+    std::span<const double> xp, const double t, const std::size_t component, int eleGID) const
 {
   // ease notation
   double x = xp[0];
@@ -2392,7 +2400,7 @@ double FLD::WeaklyCompressibleEtienneFSIFluidFunction::evaluate(
   double r0 = refdensity_;
   double p0 = refpressure_;
   double epsilon = comprcoeff_;
-  double E = youngmodulus_;
+  double E = youngmodulus_.at(eleGID);
   double v = poissonratio_;
 
   // initialize variables
@@ -2780,15 +2788,21 @@ double FLD::WeaklyCompressibleEtienneFSIFluidFunction::evaluate(
 }
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
+//Case with 3 arguments
 std::vector<double> FLD::WeaklyCompressibleEtienneFSIFluidFunction::evaluate_time_derivative(
-    std::span<const double> xp, const double t, const unsigned deg,
-    const std::size_t component) const
+    std::span<const double> xp, double t, unsigned deg, std::size_t component) const
+{
+    return evaluate_time_derivative(xp, t, deg, component, 0);
+}
+
+std::vector<double> FLD::WeaklyCompressibleEtienneFSIFluidFunction::evaluate_time_derivative(
+    std::span<const double> xp, double t, unsigned deg, std::size_t component, int eleGID) const
 {
   // resulting vector holding
   std::vector<double> res(deg + 1);
 
   // add the value at time t
-  res[0] = evaluate(xp, t, component);
+  res[0] = evaluate(xp, t, component, eleGID);
 
   // add the 1st time derivative at time t
   if (deg >= 1)
@@ -2834,14 +2848,22 @@ FLD::WeaklyCompressibleEtienneFSIFluidForceFunction::WeaklyCompressibleEtienneFS
 }
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
+// Case with 3 arguments
 double FLD::WeaklyCompressibleEtienneFSIFluidForceFunction::evaluate(
-    std::span<const double> xp, const double t, const std::size_t component) const
+    std::span<const double> x, double t, std::size_t component) const
+{
+    return evaluate(x, t, component, 0);
+}
+
+// Case with spatially varying material properties (inputfield)
+double FLD::WeaklyCompressibleEtienneFSIFluidForceFunction::evaluate(
+    std::span<const double> xp, const double t, const std::size_t component, int eleGID) const
 {
   // ease notation
   double x = xp[0];
   double y = xp[1];
   double r0 = refdensity_;
-  double E = youngmodulus_;
+  double E = youngmodulus_.at(eleGID);
   double v = poissonratio_;
 
   // initialize variables
@@ -7823,15 +7845,24 @@ double FLD::WeaklyCompressibleEtienneFSIFluidForceFunction::evaluate(
 }
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
+// Case with 3 arguments
 std::vector<double> FLD::WeaklyCompressibleEtienneFSIFluidForceFunction::evaluate_time_derivative(
     std::span<const double> xp, const double t, const unsigned deg,
     const std::size_t component) const
+{
+    return evaluate_time_derivative(xp, t, deg, component, 0);
+}
+
+// Case with spatially varying material properties (inputfield)
+std::vector<double> FLD::WeaklyCompressibleEtienneFSIFluidForceFunction::evaluate_time_derivative(
+    std::span<const double> xp, const double t, const unsigned deg,
+    const std::size_t component, int eleGID) const
 {
   // resulting vector holding
   std::vector<double> res(deg + 1);
 
   // add the value at time t
-  res[0] = evaluate(xp, t, component);
+  res[0] = evaluate(xp, t, component, eleGID);
 
   // add the 1st time derivative at time t
   if (deg >= 1)
@@ -7878,12 +7909,20 @@ FLD::WeaklyCompressibleEtienneFSIFluidViscosityFunction::
 }
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
+// Case with 3 arguments
 double FLD::WeaklyCompressibleEtienneFSIFluidViscosityFunction::evaluate(
     std::span<const double> xp, const double t, const std::size_t component) const
 {
+    return evaluate(xp, t, component, 0);
+}
+
+// Case with spatially varying material properties (inputfield)
+double FLD::WeaklyCompressibleEtienneFSIFluidViscosityFunction::evaluate(
+    std::span<const double> xp, const double t, const std::size_t component, int eleGID) const
+{
   // ease notation
   double x = xp[0];
-  double E = youngmodulus_;
+  double E = youngmodulus_.at(eleGID);
   double v = poissonratio_;
 
   // initialize variables
@@ -8056,16 +8095,25 @@ double FLD::WeaklyCompressibleEtienneFSIFluidViscosityFunction::evaluate(
 }
 /*----------------------------------------------------------------------*/
 /*----------------------------------------------------------------------*/
+// Case with 3 arguments
 std::vector<double>
 FLD::WeaklyCompressibleEtienneFSIFluidViscosityFunction::evaluate_time_derivative(
     std::span<const double> xp, const double t, const unsigned deg,
     const std::size_t component) const
 {
+    return evaluate_time_derivative(xp, t, deg, component, 0);
+}
+// Case with spatially varying material properties (inputfield)
+std::vector<double>
+FLD::WeaklyCompressibleEtienneFSIFluidViscosityFunction::evaluate_time_derivative(
+    std::span<const double> xp, const double t, const unsigned deg,
+    const std::size_t component, int eleGID) const
+{
   // resulting vector holding
   std::vector<double> res(deg + 1);
 
   // add the value at time t
-  res[0] = evaluate(xp, t, component);
+  res[0] = evaluate(xp, t, component, eleGID);
 
   // add the 1st time derivative at time t
   if (deg >= 1)

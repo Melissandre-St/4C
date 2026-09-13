@@ -36,7 +36,6 @@ namespace Solid
     WeaklyCompressibleEtienneFSIStructureFunction(const Mat::PAR::StVenantKirchhoff& fparams);
 
     double evaluate(std::span<const double> x, double t, std::size_t component) const override;
-
     std::vector<double> evaluate_time_derivative(
         std::span<const double> x, double t, unsigned deg, std::size_t component) const override;
 
@@ -51,13 +50,20 @@ namespace Solid
 
     double evaluate(std::span<const double> x, double t, std::size_t component) const override;
 
+    // Case with spatially varying material properties (inputfield)
+    double evaluate(std::span<const double> x, double t, std::size_t component, int eleGID) const override;
+
     std::vector<double> evaluate_time_derivative(
         std::span<const double> x, double t, unsigned deg, std::size_t component) const override;
+
+    // Case with spatially varying material properties (inputfield)
+    std::vector<double> evaluate_time_derivative(
+        std::span<const double> x, double t, unsigned deg, std::size_t component, int eleGID) const override;
 
     [[nodiscard]] std::size_t number_components() const override { return (2); };
 
    private:
-    double youngmodulus_;
+    Core::IO::InputField<double> youngmodulus_;
     double poissonratio_;
     double strucdensity_;
   };
