@@ -1129,8 +1129,8 @@ std::unordered_map<Core::Materials::MaterialType, Core::IO::InputSpec> Global::v
 
     known_materials[Core::Materials::m_stvenant] = group("MAT_Struct_StVenantKirchhoff",
         {
-            parameter<double>(
-                "YOUNG", {.description = "Young's modulus", .validator = positive<double>()}),
+            input_field<double>(
+                "YOUNG", {.description = "Young's modulus"}),
             parameter<double>("NUE",
                 {.description = "Poisson's ratio", .validator = in_range<double>(-1.0, excl(0.5))}),
             parameter<double>("DENS", {.description = "mass density"}),
@@ -1184,8 +1184,8 @@ std::unordered_map<Core::Materials::MaterialType, Core::IO::InputSpec> Global::v
     using namespace Core::IO::InputSpecBuilders::Validators;
     known_materials[Core::Materials::m_pldruckprag] = group("MAT_Struct_DruckerPrager",
         {
-            input_field<double>(
-                "YOUNG", {.description = "Young's modulus"}),
+            parameter<double>(
+                "YOUNG", {.description = "Young's modulus", .validator = positive<double>()}),
             parameter<double>(
                 "NUE", {.description = "Poisson's ratio (must be in (-1, 0.5) for stability)",
                            .validator = in_range(excl(-1.0), excl(0.5))}),
