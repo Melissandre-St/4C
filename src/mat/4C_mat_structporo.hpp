@@ -227,7 +227,7 @@ namespace Mat
         int gp,                                //!< (i) number of current gauss point
         double& porosity,                      //!< (o) porosity at gauss point
         bool save=true,
-        int eleGID=0);  //!< (i) element global ID, by default 0 if we don't iterate over the elements                      //!< (i) element global ID
+        int eleGID=0);  //!< (i) element global ID, by default 0 if we don't iterate over the elements
 
     //! return copy of this material object
     std::shared_ptr<Core::Mat::Material> clone() const override

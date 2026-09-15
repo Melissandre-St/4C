@@ -237,6 +237,8 @@ void Mat::StructPoro::unpack(Core::Communication::UnpackBuffer& buffer)
 
 void Mat::StructPoro::post_setup(const Teuchos::ParameterList& params, const int eleGID)
 {
+  initialize_porosity_values(eleGID);
+
   // Forward post_setup call to actual solid material
   mat_->post_setup(params, eleGID);
 }
